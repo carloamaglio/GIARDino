@@ -25,6 +25,7 @@ class Keypad {
     void backlit(int on);
     int buttonAvailable();
 		int button();
+    int waitForButton(unsigned long timeout);
 		int adc_key_in;
 
     char* buttonName(int b);

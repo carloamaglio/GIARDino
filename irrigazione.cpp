@@ -184,19 +184,8 @@ void irrigazioneTimerDetail09Show(void) { irrigazioneTimerDetailShow(9); }
     return rv;                      \
   }
 
-#if 0
 static int editMonday(GTimer &t) { editDay("L", t.monday, 9, 0); }
-#else
-static int editMonday(GTimer &t) {
-  int v = t.monday?1:0;
-  char* l[] { "-", "L", 0 };
-  int rv = editList(&v, l, 9, 0);
-  if (rv) t.monday = v?1:0;
-  return rv;
-}
-#endif
-
-static int editTuesday(GTimer &t) { editDay("M", t.monday, 10, 0); }
+static int editTuesday(GTimer &t) { editDay("M", t.tuesday, 10, 0); }
 static int editWednesday(GTimer &t) { editDay("M", t.wednesday, 11, 0); }
 static int editThursday(GTimer &t) { editDay("G", t.thursday, 12, 0); }
 static int editFriday(GTimer &t) { editDay("V", t.friday, 13, 0); }

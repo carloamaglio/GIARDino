@@ -62,6 +62,19 @@ int Keypad::button() {
 	return rv;
 }
 
+int Keypad::waitForButton(unsigned long timeout) {
+  int rv=-1;
+
+  timer tmr[1];
+  timerSet(tmr, timeout);
+  while (rv==-1) {
+    if (keypad.buttonAvailable()) {
+      rv = keypad.button();
+    } else if (timerExpired(tmr)) rv=btnNONE;
+  }
+  return rv;
+}
+
 /**
  * read the buttons
  */

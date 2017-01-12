@@ -41,11 +41,13 @@ void LcdPrintInt_Zero(int value, int maxLen) {
 
 static void LcdPrintListEdit(char* val, int x, int y, int maxLen) {
   char s[maxLen+1];
-  sprintf(s, "%*s", maxLen+1, val);
-  lcd.setCursor(x, y);
-  lcd.print(s);
+  int len = strlen(val);
+  int padlen = maxLen-len;
+  if (padlen>0) memset(s, ' ', padlen);
+  strcpy(s+padlen, val);
+  print(x, y, s);
   lcd.setCursor(x+maxLen-1, y);
-  p(val); p(", s='"); p(s); pln("'");
+  //p(val); p(", s='"); p(s); pln("'");
 }
 
 static void LcdPrintIntEdit(int val, int x, int y, int maxLen) {
@@ -72,8 +74,8 @@ int editList(int *pVal, char **values, int x, int y)
   int min = 0;
   int max = getListLen(values)-1;
 
-  p("val="); p(val); p(", maxLen="); p(maxLen); p(", max="); pln(max);
-  dumpList(values);
+  //p("val="); p(val); p(", maxLen="); p(maxLen); p(", max="); pln(max);
+  //dumpList(values);
 
   lcd.blink();
 
@@ -81,30 +83,24 @@ int editList(int *pVal, char **values, int x, int y)
   else if (val<min) val=min;
   LcdPrintListEdit(values[val], x, y, maxLen);
 
-  timer tmr[1];
-  timerSet(tmr, EDITTIMEOUT);
   while (exit==-1) {
-    if (keypad.buttonAvailable()) {
-      timerSet(tmr, EDITTIMEOUT);
-      int key = keypad.button();
-    
-      if (key==btnLEFT) exit=0;
-      else if (key==btnUP) {
-        if (val>=max) val=min; else val++;
-        LcdPrintListEdit(values[val], x, y, maxLen);
-      } else if (key==btnDOWN) {
-        if (val<=min) val=max; else val--;
-        LcdPrintListEdit(values[val], x, y, maxLen);
-      } else if (key==btnSELECT) exit=1;
-    } else if (timerExpired(tmr)) exit=0;
+    int key = keypad.waitForButton(EDITTIMEOUT);
+
+    if (key==btnLEFT) exit=0;
+    else if (key==btnUP) {
+      if (val>=max) val=min; else val++;
+      LcdPrintListEdit(values[val], x, y, maxLen);
+    } else if (key==btnDOWN) {
+      if (val<=min) val=max; else val--;
+      LcdPrintListEdit(values[val], x, y, maxLen);
+    } else if (key==btnSELECT) exit=1;
+    else if (key==btnNONE) exit=0;
   }
 
   lcd.noBlink();
 
   if (exit==1) *pVal=val;
-  else {
-    LcdPrintListEdit(values[*pVal], x, y, maxLen);
-  }
+  else LcdPrintListEdit(values[*pVal], x, y, maxLen);
 
   return exit;
 }
@@ -121,22 +117,18 @@ int editUnsigned(int *pVal, int min, int max, int x, int y)
   else if (val<min) val=min;
   LcdPrintIntEdit(val, x, y, maxLen);
 
-  timer tmr[1];
-  timerSet(tmr, EDITTIMEOUT);
   while (exit==-1) {
-    if (keypad.buttonAvailable()) {
-      timerSet(tmr, EDITTIMEOUT);
-      int key = keypad.button();
+    int key = keypad.waitForButton(EDITTIMEOUT);
     
-      if (key==btnLEFT) exit=0;
-      else if (key==btnUP) {
-        if (val>=max) val=min; else val++;
-        LcdPrintIntEdit(val, x, y, maxLen);
-      } else if (key==btnDOWN) {
-        if (val<=min) val=max; else val--;
-        LcdPrintIntEdit(val, x, y, maxLen);
-      } else if (key==btnSELECT) exit=1;
-    } else if (timerExpired(tmr)) exit=0;
+    if (key==btnLEFT) exit=0;
+    else if (key==btnUP) {
+      if (val>=max) val=min; else val++;
+      LcdPrintIntEdit(val, x, y, maxLen);
+    } else if (key==btnDOWN) {
+      if (val<=min) val=max; else val--;
+      LcdPrintIntEdit(val, x, y, maxLen);
+    } else if (key==btnSELECT) exit=1;
+    else if (key==btnNONE) exit=0;
   }
 
   lcd.noBlink();
