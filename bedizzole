@@ -1,0 +1,16 @@
+<NotepadPlus>
+    <Session activeView="0">
+        <mainView activeIndex="4">
+            <File firstVisibleLine="57" xOffset="0" scrollWidth="68733" startPos="1455" endPos="1455" selMode="0" lang="C++" encoding="-1" filename="G:\Documents\Arduino\arduino-1.8.0\portable\sketchbook\bedizzole\bedizzole.ino" backupFilePath="" originalFileLastModifTimestamp="1483969026" />
+            <File firstVisibleLine="49" xOffset="0" scrollWidth="68733" startPos="1412" endPos="1415" selMode="0" lang="C++" encoding="-1" filename="G:\Documents\Arduino\Irrighino\Irrighino\Irrighino\Timers.pde" backupFilePath="" originalFileLastModifTimestamp="1298470518" />
+            <File firstVisibleLine="105" xOffset="0" scrollWidth="68733" startPos="2417" endPos="2417" selMode="0" lang="C++" encoding="-1" filename="G:\Documents\Arduino\Irrighino\Irrighino\Irrighino\Edit.pde" backupFilePath="" originalFileLastModifTimestamp="1297860622" />
+            <File firstVisibleLine="48" xOffset="0" scrollWidth="68733" startPos="955" endPos="955" selMode="0" lang="C++" encoding="-1" filename="G:\Documents\Arduino\arduino-1.8.0\portable\sketchbook\bedizzole\edit.cpp" backupFilePath="" originalFileLastModifTimestamp="1483966084" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="68733" startPos="0" endPos="0" selMode="0" lang="C++" encoding="-1" filename="G:\Documents\Arduino\arduino-1.8.0\portable\sketchbook\bedizzole\irrigazione.cpp" backupFilePath="" originalFileLastModifTimestamp="1483969782" />
+            <File firstVisibleLine="7" xOffset="0" scrollWidth="68733" startPos="481" endPos="481" selMode="0" lang="C++" encoding="-1" filename="G:\Documents\Arduino\arduino-1.8.0\portable\sketchbook\bedizzole\utils.cpp" backupFilePath="" originalFileLastModifTimestamp="1483899776" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="68733" startPos="91" endPos="91" selMode="0" lang="C++" encoding="-1" filename="G:\Documents\Arduino\arduino-1.8.0\portable\sketchbook\bedizzole\edit.h" backupFilePath="" originalFileLastModifTimestamp="1483969434" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="68733" startPos="345" endPos="345" selMode="0" lang="C++" encoding="-1" filename="G:\Documents\Arduino\arduino-1.8.0\portable\sketchbook\bedizzole\irrigazione.h" backupFilePath="" originalFileLastModifTimestamp="1483968674" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="68733" startPos="94" endPos="94" selMode="0" lang="C++" encoding="-1" filename="G:\Documents\Arduino\arduino-1.8.0\portable\sketchbook\bedizzole\utils.h" backupFilePath="" originalFileLastModifTimestamp="1483889610" />
+        </mainView>
+        <subView activeIndex="0" />
+    </Session>
+</NotepadPlus>
