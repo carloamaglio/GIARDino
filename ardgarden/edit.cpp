@@ -108,8 +108,7 @@ int editList(int *pVal, char **values, int x, int y)
   return key;
 }
 
-int editUnsigned(int *pVal, int min, int max, int x, int y)
-{
+int editUnsigned(int *pVal, int min, int max, int x, int y) {
   int key;
   int val = *pVal;
   int exit = -1;
@@ -142,6 +141,13 @@ int editUnsigned(int *pVal, int min, int max, int x, int y)
     LcdPrintInt_Zero(*pVal, maxLen);
   }
 
+  return key;
+}
+
+int editUnsignedChar(char *pVal, int min, int max, int x, int y) {
+  int v = *pVal;
+  int key = editUnsigned(&v, min, max, x, y);
+  if (key==btnSELECT) *pVal = v;
   return key;
 }
 

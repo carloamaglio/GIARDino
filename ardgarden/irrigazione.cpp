@@ -15,10 +15,12 @@
 
 #define EEPROMOFFSET  0
 
-static Rele rele[6];
+#define NUMRELE 6
+
+static Rele rele[NUMRELE];
 
 typedef struct GTimer {
-  char rele;      // rele affected by the timer (255=all available rele)
+  char rele;      // rele affected by the timer (0=all available rele)
   unsigned int active:1;
   unsigned int sunday:1;
   unsigned int monday:1;
@@ -224,7 +226,7 @@ void irrigazioneTimerDetailSelect(int n) {
   int i=0;
   GTimer t;
   readTimer(t, n);
-  while (i>=0 && i<11) {
+  while (i>=0 && i<12) {
     int key;
     switch (i) {
       case 0: key=editMonday(t); break;
@@ -238,6 +240,7 @@ void irrigazioneTimerDetailSelect(int n) {
       case 8: key=editStartMinute(t, 3, 1); break;
       case 9: key=editEndHour(t, 6, 1); break;
       case 10: key=editEndMinute(t, 9, 1); break;
+      case 11: key=editUnsignedChar(&t.rele, 0, NUMRELE, 13, 1); break;
     }
     switch (key) {
       case btnSELECT: writeTimer(t, n);

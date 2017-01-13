@@ -9,6 +9,7 @@
 
 extern int editList(int *pVal, char **values, int x, int y);
 extern int editUnsigned(int *pVal, int min, int max, int LCD_X, int LCD_Y);
+extern int editUnsignedChar(char *pVal, int min, int max, int x, int y);
 extern void setDateAndTime();
 
 #endif
