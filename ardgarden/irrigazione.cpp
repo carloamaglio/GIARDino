@@ -7,8 +7,10 @@
 #include <arduino.h>
 #include <EEPROM.h>
 #include "rele.h"
+#include "keypad.h"
 #include "edit.h"
 #include "utils.h"
+#include "menu.h"
 #include "irrigazione.h"
 
 #define EEPROMOFFSET  0
@@ -91,6 +93,9 @@ static char day(DateTime &now, GTimer &t) {
   }
 }
 
+/*
+ *
+ */
 void irrigazioneLoop() {
   DateTime now = RTC.now();
   int nowmin = now.hour()*60+now.minute();
@@ -122,6 +127,12 @@ static void printReleStates(int r, int n) {
 void irrigazioneShowSummary() {
   lcd.setCursor(13, 0); printReleStates(0, 3);
   lcd.setCursor(13, 1); printReleStates(2, 3);
+}
+
+void irrigazioneShow() {
+  print(0, 0, "IRRIGAZIONE  ");
+  print(0, 1, "             ");
+  irrigazioneShowSummary();
 }
 
 void irrigazioneOutStateShow(int n) {
@@ -180,7 +191,7 @@ void irrigazioneTimerDetail09Show(void) { irrigazioneTimerDetailShow(9); }
     int v = (val);                  \
     char* l[] = { "-", day, 0 };    \
     int rv = editList(&v, l, x, y); \
-    if (rv) val = v;                \
+    if (rv==btnSELECT) val = v;     \
     return rv;                      \
   }
 
@@ -197,7 +208,7 @@ static int editSunday(GTimer &t) { editDay("D", t.sunday, 15, 0); }
   {                                                 \
     int v = tov;                                    \
     int rv = editUnsigned(&v, 0, max, x, y);        \
-    if (rv) val = toval;                            \
+    if (rv==btnSELECT) val = toval;                 \
     return rv;                                      \
   }
 
@@ -209,25 +220,31 @@ static int editEndHour(GTimer &t, int x, int y) { _editHour(t.tEnd, x, y); }
 static int editStartMinute(GTimer &t, int x, int y) { _editMinute(t.tStart, x, y); }
 static int editEndMinute(GTimer &t, int x, int y) { _editMinute(t.tEnd, x, y); }
 
-
-
 void irrigazioneTimerDetailSelect(int n) {
+  int i=0;
   GTimer t;
   readTimer(t, n);
-  if (
-    editMonday(t) && 
-    editTuesday(t) && 
-    editWednesday(t) && 
-    editThursday(t) && 
-    editFriday(t) && 
-    editSaturday(t) && 
-    editSunday(t) && 
-    editStartHour(t, 0, 1) && 
-    editStartMinute(t, 3, 1) && 
-    editEndHour(t, 6, 1) && 
-    editEndMinute(t, 9, 1)
-  ) {
-    writeTimer(t, n);
+  while (i>=0 && i<11) {
+    int key;
+    switch (i) {
+      case 0: key=editMonday(t); break;
+      case 1: key=editTuesday(t); break;
+      case 2: key=editWednesday(t); break;
+      case 3: key=editThursday(t); break;
+      case 4: key=editFriday(t); break;
+      case 5: key=editSaturday(t); break;
+      case 6: key=editSunday(t); break;
+      case 7: key=editStartHour(t, 0, 1); break;
+      case 8: key=editStartMinute(t, 3, 1); break;
+      case 9: key=editEndHour(t, 6, 1); break;
+      case 10: key=editEndMinute(t, 9, 1); break;
+    }
+    switch (key) {
+      case btnSELECT: writeTimer(t, n);
+      case btnRIGHT: i++; break;
+      case btnLEFT: i--; break;
+      case btnNONE: i=-1; break;
+    }
   }
 }
 void irrigazioneTimerDetail00Select(void) { irrigazioneTimerDetailSelect(0); }
@@ -240,3 +257,29 @@ void irrigazioneTimerDetail06Select(void) { irrigazioneTimerDetailSelect(6); }
 void irrigazioneTimerDetail07Select(void) { irrigazioneTimerDetailSelect(7); }
 void irrigazioneTimerDetail08Select(void) { irrigazioneTimerDetailSelect(8); }
 void irrigazioneTimerDetail09Select(void) { irrigazioneTimerDetailSelect(9); }
+
+static const Item items[] {
+  ITEM_N(irrigazioneTimerDetail, 00), 
+  ITEM_N(irrigazioneTimerDetail, 01), 
+  ITEM_N(irrigazioneTimerDetail, 02), 
+  ITEM_N(irrigazioneTimerDetail, 03), 
+  ITEM_N(irrigazioneTimerDetail, 04), 
+  ITEM_N(irrigazioneTimerDetail, 05), 
+  ITEM_N(irrigazioneTimerDetail, 06), 
+  ITEM_N(irrigazioneTimerDetail, 07), 
+  ITEM_N(irrigazioneTimerDetail, 08), 
+  ITEM_N(irrigazioneTimerDetail, 09), 
+  ITEM_N(irrigazioneOutState, 00), 
+  ITEM_N(irrigazioneOutState, 01), 
+  ITEM_N(irrigazioneOutState, 02), 
+  ITEM_N(irrigazioneOutState, 03), 
+  ITEM_N(irrigazioneOutState, 04), 
+  ITEM_N(irrigazioneOutState, 05), 
+};
+
+static MENU(menu, items, 1);
+
+void irrigazioneSelect() {
+  menuTask(menu);
+}
+

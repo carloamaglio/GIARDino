@@ -66,8 +66,12 @@ void dumpList(char **values) {
 	pln("");
 }
 
+/*
+ *
+ */
 int editList(int *pVal, char **values, int x, int y)
 {
+  int key;
   int val = *pVal;
   int exit = -1;
   int maxLen = getListMaxLen(values);
@@ -84,17 +88,16 @@ int editList(int *pVal, char **values, int x, int y)
   LcdPrintListEdit(values[val], x, y, maxLen);
 
   while (exit==-1) {
-    int key = keypad.waitForButton(EDITTIMEOUT);
+    key = keypad.waitForButton(EDITTIMEOUT);
 
-    if (key==btnLEFT) exit=0;
-    else if (key==btnUP) {
+    if (key==btnUP) {
       if (val>=max) val=min; else val++;
       LcdPrintListEdit(values[val], x, y, maxLen);
     } else if (key==btnDOWN) {
       if (val<=min) val=max; else val--;
       LcdPrintListEdit(values[val], x, y, maxLen);
     } else if (key==btnSELECT) exit=1;
-    else if (key==btnNONE) exit=0;
+    else exit=0;
   }
 
   lcd.noBlink();
@@ -102,11 +105,12 @@ int editList(int *pVal, char **values, int x, int y)
   if (exit==1) *pVal=val;
   else LcdPrintListEdit(values[*pVal], x, y, maxLen);
 
-  return exit;
+  return key;
 }
 
 int editUnsigned(int *pVal, int min, int max, int x, int y)
 {
+  int key;
   int val = *pVal;
   int exit = -1;
   int maxLen = getIntLen(max);
@@ -118,17 +122,16 @@ int editUnsigned(int *pVal, int min, int max, int x, int y)
   LcdPrintIntEdit(val, x, y, maxLen);
 
   while (exit==-1) {
-    int key = keypad.waitForButton(EDITTIMEOUT);
+    key = keypad.waitForButton(EDITTIMEOUT);
     
-    if (key==btnLEFT) exit=0;
-    else if (key==btnUP) {
+    if (key==btnUP) {
       if (val>=max) val=min; else val++;
       LcdPrintIntEdit(val, x, y, maxLen);
     } else if (key==btnDOWN) {
       if (val<=min) val=max; else val--;
       LcdPrintIntEdit(val, x, y, maxLen);
     } else if (key==btnSELECT) exit=1;
-    else if (key==btnNONE) exit=0;
+    else exit=0;
   }
 
   lcd.noBlink();
@@ -139,7 +142,7 @@ int editUnsigned(int *pVal, int min, int max, int x, int y)
     LcdPrintInt_Zero(*pVal, maxLen);
   }
 
-  return exit;
+  return key;
 }
 
 static int getField(DateTime *dt, int i) {
@@ -187,17 +190,33 @@ static const int yField[] = { 0, 0, 0, 1, 1, 1 };
 static int getYField(DateTime *dt, int i) { return yField[i]; }
 
 static int edit(int i) {
+  int key;
   DateTime now = RTC.now();
   int v = getField(&now, i);
-  if (editUnsigned(&v, getMin(&now, i), getMax(&now, i), getXField(&now, i), getYField(&now, i))==1) {
+  if ((key=editUnsigned(&v, getMin(&now, i), getMax(&now, i), getXField(&now, i), getYField(&now, i)))==btnSELECT) {
     setField(i, v);
-    return 1;
   }
-  return 0;
+  return key;
 }
+
+#define LEN(a)  (sizeof(a)/sizeof(a[0]))
 
 static const int indexes[] = { 2, 1, 0, 3, 4, 5 };
 void setDateAndTime() {
-  for (int i=0; i<6; i++) if (edit(indexes[i])!=1) break;
+  int i=0;
+  while (i>=0 && i<LEN(indexes)) {
+    switch (edit(indexes[i])) {
+      case btnSELECT:
+      case btnRIGHT:
+        i++;
+        break;
+      case btnLEFT:
+        i--;
+        break;
+      case btnNONE:
+        i=-1;
+        break;
+    }
+  }
 }
 

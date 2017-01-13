@@ -22,22 +22,7 @@ static void dateTimeSelect(void) { setDateAndTime(); }
 
 static const Item items[] {
   ITEM(dateTime), 
-  ITEM_N(irrigazioneTimerDetail, 00), 
-  ITEM_N(irrigazioneTimerDetail, 01), 
-  ITEM_N(irrigazioneTimerDetail, 02), 
-  ITEM_N(irrigazioneTimerDetail, 03), 
-  ITEM_N(irrigazioneTimerDetail, 04), 
-  ITEM_N(irrigazioneTimerDetail, 05), 
-  ITEM_N(irrigazioneTimerDetail, 06), 
-  ITEM_N(irrigazioneTimerDetail, 07), 
-  ITEM_N(irrigazioneTimerDetail, 08), 
-  ITEM_N(irrigazioneTimerDetail, 09), 
-  ITEM_N(irrigazioneOutState, 00), 
-  ITEM_N(irrigazioneOutState, 01), 
-  ITEM_N(irrigazioneOutState, 02), 
-  ITEM_N(irrigazioneOutState, 03), 
-  ITEM_N(irrigazioneOutState, 04), 
-  ITEM_N(irrigazioneOutState, 05), 
+  ITEM(irrigazione), 
 };
 
 static MENU(mainMenu, items, 1);

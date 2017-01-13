@@ -11,6 +11,9 @@ extern void irrigazioneInit();
 extern void irrigazioneLoop();
 extern void irrigazioneShowSummary();
 
+extern void irrigazioneShow();
+extern void irrigazioneSelect();
+
 extern void irrigazioneOutStateShow(int n);
 extern void irrigazioneOutState00Show(void);
 extern void irrigazioneOutState01Show(void);
