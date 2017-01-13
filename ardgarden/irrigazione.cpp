@@ -164,8 +164,10 @@ void irrigazioneTimerDetailShow(int n) {
   GTimer t;
   readTimer(t, n);
 
-  sprintf(s, "Timer %02d ", n);
+  sprintf(s, "T%02d ", n+1);
   print(0, 0, s);
+  lcd.print(t.active?" ON":"OFF");
+  lcd.print("  ");
   lcd.print(t.monday?"L":"-");
   lcd.print(t.tuesday?"M":"-");
   lcd.print(t.wednesday?"M":"-");
@@ -174,7 +176,7 @@ void irrigazioneTimerDetailShow(int n) {
   lcd.print(t.saturday?"S":"-");
   lcd.print(t.sunday?"D":"-");
 
-  sprintf(s, "%02d:%02d>%02d:%02d U=%02d", t.tStart/60, t.tStart%60, t.tEnd/60, t.tEnd%60, t.rele);
+  sprintf(s, "%02d:%02d>%02d:%02d  U=%1d", t.tStart/60, t.tStart%60, t.tEnd/60, t.tEnd%60, t.rele);
   print(0, 1, s);
 }
 void irrigazioneTimerDetail00Show(void) { irrigazioneTimerDetailShow(0); }
@@ -188,22 +190,22 @@ void irrigazioneTimerDetail07Show(void) { irrigazioneTimerDetailShow(7); }
 void irrigazioneTimerDetail08Show(void) { irrigazioneTimerDetailShow(8); }
 void irrigazioneTimerDetail09Show(void) { irrigazioneTimerDetailShow(9); }
 
-#define editDay(day, val, x, y)     \
-  {                                 \
-    int v = (val);                  \
-    char* l[] = { "-", day, 0 };    \
-    int rv = editList(&v, l, x, y); \
-    if (rv==btnSELECT) val = v;     \
-    return rv;                      \
+static char* ABILITAZIONE[] { "OFF", " ON", 0 };
+
+#define editListField(rv, lst, val, x, y) \
+  {                                       \
+    int v = (val);                        \
+    rv = editList(&v, lst, x, y);         \
+    if (rv==btnSELECT) val = v;           \
   }
 
-static int editMonday(GTimer &t) { editDay("L", t.monday, 9, 0); }
-static int editTuesday(GTimer &t) { editDay("M", t.tuesday, 10, 0); }
-static int editWednesday(GTimer &t) { editDay("M", t.wednesday, 11, 0); }
-static int editThursday(GTimer &t) { editDay("G", t.thursday, 12, 0); }
-static int editFriday(GTimer &t) { editDay("V", t.friday, 13, 0); }
-static int editSaturday(GTimer &t) { editDay("S", t.saturday, 14, 0); }
-static int editSunday(GTimer &t) { editDay("D", t.sunday, 15, 0); }
+static char* MONDAY[] { "-", "L", 0 };
+static char* TUESDAY[] { "-", "M", 0 };
+static char* WEDNESDAY[] { "-", "M", 0 };
+static char* THURSDAY[] { "-", "G", 0 };
+static char* FRIDAY[] { "-", "V", 0 };
+static char* SATURDAY[] { "-", "S", 0 };
+static char* SUNDAY[] { "-", "D", 0 };
 
 
 #define editTimeField(val, tov, toval, max, x, y)   \
@@ -226,21 +228,22 @@ void irrigazioneTimerDetailSelect(int n) {
   int i=0;
   GTimer t;
   readTimer(t, n);
-  while (i>=0 && i<12) {
+  while (i>=0 && i<13) {
     int key;
     switch (i) {
-      case 0: key=editMonday(t); break;
-      case 1: key=editTuesday(t); break;
-      case 2: key=editWednesday(t); break;
-      case 3: key=editThursday(t); break;
-      case 4: key=editFriday(t); break;
-      case 5: key=editSaturday(t); break;
-      case 6: key=editSunday(t); break;
-      case 7: key=editStartHour(t, 0, 1); break;
-      case 8: key=editStartMinute(t, 3, 1); break;
-      case 9: key=editEndHour(t, 6, 1); break;
-      case 10: key=editEndMinute(t, 9, 1); break;
-      case 11: key=editUnsignedChar(&t.rele, 0, NUMRELE, 13, 1); break;
+      case 0: editListField(key, ABILITAZIONE, t.active, 4, 0); break;
+      case 1: editListField(key, MONDAY, t.monday, 9, 0); break;
+      case 2: editListField(key, TUESDAY, t.tuesday, 10, 0); break;
+      case 3: editListField(key, WEDNESDAY, t.wednesday, 11, 0); break;
+      case 4: editListField(key, THURSDAY, t.thursday, 12, 0); break;
+      case 5: editListField(key, FRIDAY, t.friday, 13, 0); break;
+      case 6: editListField(key, SATURDAY, t.saturday, 14, 0); break;
+      case 7: editListField(key, SUNDAY, t.sunday, 15, 0); break;
+      case 8: key=editStartHour(t, 0, 1); break;
+      case 9: key=editStartMinute(t, 3, 1); break;
+      case 10: key=editEndHour(t, 6, 1); break;
+      case 11: key=editEndMinute(t, 9, 1); break;
+      case 12: key=editUnsignedChar(&t.rele, 0, NUMRELE, 15, 1); break;
     }
     switch (key) {
       case btnSELECT: writeTimer(t, n);
@@ -280,9 +283,8 @@ static const Item items[] {
   ITEM_N(irrigazioneOutState, 05), 
 };
 
-static MENU(menu, items, 1);
+static MENU(menu, items, 0);
 
 void irrigazioneSelect() {
   menuTask(menu);
 }
-

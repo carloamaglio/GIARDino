@@ -13,19 +13,23 @@ void menuInit(struct Menu *menu) {
 }
 
 void menuTask(struct Menu *menu) {
-  menu->items[menu->curItem].show();
+  int done = 0;
+  while (!done) {
+    menu->items[menu->curItem].show();
 
-  int key = keypad.button();
+    int key = keypad.button();
 
-  if (key==btnSELECT) {
-    menu->items[menu->curItem].select();
-  } else if (key==btnUP) {
-    if (menu->curItem >= menu->nItems-1) menu->curItem=0; else menu->curItem++;
-    lcd.clear();
-  } else if (key==btnDOWN) {
-    if (menu->curItem <= 0) menu->curItem=menu->nItems-1; else menu->curItem--;
-    lcd.clear();
-  } else if (key==btnLEFT) {
-  } else if (key==btnRIGHT) {
+    if (key==btnSELECT) {
+      menu->items[menu->curItem].select();
+    } else if (key==btnUP) {
+      if (menu->curItem >= menu->nItems-1) menu->curItem=0; else menu->curItem++;
+      lcd.clear();
+    } else if (key==btnDOWN) {
+      if (menu->curItem <= 0) menu->curItem=menu->nItems-1; else menu->curItem--;
+      lcd.clear();
+    } else if (key==btnLEFT && !menu->root) {
+      done=1;
+    } else if (key==btnRIGHT) {
+    }
   }
 }
