@@ -1,5 +1,6 @@
 /*
- * 
+ * ardgarden - ARDuino GARDEN automation
+ *  Carlo Amaglio
  */
 
 #include <avr/wdt.h>
