@@ -1,5 +1,5 @@
 /*
- * irrigazione.cpp - 
+ * irrigazione.cpp - Garden irrigation management module (irrigazione is "garden irrigation" in Italian)
  * 
  * Released into the public domain
  */
