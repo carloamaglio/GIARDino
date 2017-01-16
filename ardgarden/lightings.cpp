@@ -53,12 +53,13 @@ void lightingsLoop() {
     updateCurrentDay();
   }
   int mod = now.hour()*60+now.minute();
+  int night = (mod >= sunset-60);
   switch (state) {
     case 0: // waiting for turning light ON. In this state light can be ON or OFF
-      if ((mod > sunset-60) || (mod < 60)) { setLight(1); state++; }
+      if (night || (mod < 60)) { setLight(1); state++; }
       break;
     case 1: // waiting for turning light OFF. In this state light can be ON or OFF
-      if (mod > 60) { setLight(0); state--; }
+      if (mod >= 60 && !night) { setLight(0); state--; }
       break;
   }
 }
@@ -67,7 +68,7 @@ void lightingsShowSummary() {
 }
 
 void lightingsShow() {
-  print(0, 0, "SUNSET="); lcd.print(sunset/60); lcd.print(":"); lcd.print(sunset%60);
+  print(0, 0, "SUNSET="); lcd.print(sunset/60); lcd.print(":"); LcdPrintInt_Zero(sunset%60, 2);
   print(0, 1, "STATE="); lcd.print(state); lcd.print(", L="); lcd.print(light?"ON ":"OFF");
   lightingsShowSummary();
 }
@@ -78,9 +79,9 @@ void lightingsSelect() {
     lcd.clear();
     lightingsShow();
     lcd.setCursor(11, 1);
-    int k = keypad.button();
-    if (k=btnUP) setLight(1);
-    else if (k=btnDOWN) setLight(0);
+    int k = keypad.waitForButton(20000);
+    if (k==btnUP) setLight(1);
+    else if (k==btnDOWN) setLight(0);
     else break;
   }
   lcd.noBlink();

@@ -54,16 +54,16 @@ void setup() {
   delay(200);
 
   keypad.setup(myloop);
-  print(0, 0, "*** BEDIZZOLE ***"); delay(1000);
+  print(0, 0, "*** BEDIZZOLE ***"); delay(500);
 
   Wire.begin();
   lcd.clear();
   if (!RTC.isrunning()) {
-    print(0, 0, "RTC is NOT"); print(0, 1, "running!"); delay(2000);
+    print(0, 0, "RTC is NOT"); print(0, 1, "running!"); delay(1000);
     // following line sets the RTC to the date &amp; time this sketch was compiled
     RTC.adjust(DateTime(__DATE__, __TIME__));
   } else {
-    print(0, 0, "RTC is running"); print(0, 1, "properly."); delay(2000);
+    print(0, 0, "RTC is running"); print(0, 1, "properly."); delay(1000);
   }
 
   for (int i=0; i<sizeof(tasks)/sizeof(tasks[0]); i++) tasks[i].init();
