@@ -14,22 +14,34 @@
 #include "menu.h"
 
 #include "irrigazione.h"
+#include "lightings.h"
 
 RTC_DS1307 RTC;
+
+struct Task {
+  void (*init)();
+  void (*loop)();
+};
+
+static struct Task tasks[] {
+  { irrigazioneInit, irrigazioneLoop }, 
+  { lightingsInit, lightingsLoop }, 
+};
 
 static void dateTimeShow(void) { showDateTime(); irrigazioneShowSummary(); }
 static void dateTimeSelect(void) { setDateAndTime(); }
 
-static const Item items[] {
+static const Item mainMenuItems[] {
   ITEM(dateTime), 
   ITEM(irrigazione), 
+  ITEM(lightings), 
 };
 
-static MENU(mainMenu, items, 1);
+static MENU(mainMenu, mainMenuItems, 1);
 
 
 static void myloop(void) {
-  irrigazioneLoop();
+  for (int i=0; i<sizeof(tasks)/sizeof(tasks[0]); i++) tasks[i].loop();
   wdt_reset();
 }
 
@@ -54,9 +66,7 @@ void setup() {
     print(0, 0, "RTC is running"); print(0, 1, "properly."); delay(2000);
   }
 
-  lcd.clear();
-
-  irrigazioneInit();
+  for (int i=0; i<sizeof(tasks)/sizeof(tasks[0]); i++) tasks[i].init();
   menuInit(mainMenu);
   wdt_enable(WDTO_2S);
 
