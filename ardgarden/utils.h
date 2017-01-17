@@ -27,6 +27,8 @@ extern LiquidCrystal lcd;
 extern void print(int x, int y, char* s);
 extern void print(char* s);
 //extern void print(int n);
+extern int getIntLen(unsigned int val);
+extern void printInt(int value, int maxLen);
 
 extern char* monthName(int m);
 extern void showDateTime();

@@ -33,6 +33,23 @@ void print(char* s) {
 //  print(itoa(n, s, 10));
 //}
 
+int getIntLen(unsigned int val) {
+  int i=0;
+  if (val==0) return 1;
+  do {
+    val/=10; 
+    i++;
+  } while(val>0);
+  return i;
+}
+
+void printInt(int value, int maxLen) {
+  int nZero = maxLen-getIntLen(value);
+  while (nZero-- > 0) lcd.print('0');
+  lcd.print(value);
+}
+
+
 static const char* months[] = { "GEN", "FEB", "MAR", "APR", "MAG", "GIU", "LUG", "AGO", "SET", "OTT", "NOV", "DIC" };
 char* monthName(int m) { return months[m-1]; }
 

@@ -1,16 +1,6 @@
 #include "keypad.h"
 #include "utils.h"
 
-static int getIntLen(unsigned int val) {
-  int i=0;
-  if (val==0) return 1;
-  do {
-    val/=10; 
-    i++;
-  } while(val>0);
-  return i;
-}
-
 static int getListLen(char **values) {
   int rv=0;
   while (*values) {
@@ -29,16 +19,6 @@ static int getListMaxLen(char **values) {
   return rv;
 }
 
-void LcdPrintInt_Zero(int value, int maxLen) {
-  int nZero = maxLen-getIntLen(value);
-
-  while (nZero>0) {
-    lcd.print('0');
-    nZero--;
-  }
-  lcd.print(value);
-}
-
 static void LcdPrintListEdit(char* val, int x, int y, int maxLen) {
   char s[maxLen+1];
   int len = strlen(val);
@@ -52,7 +32,7 @@ static void LcdPrintListEdit(char* val, int x, int y, int maxLen) {
 
 static void LcdPrintIntEdit(int val, int x, int y, int maxLen) {
   lcd.setCursor(x, y);
-  LcdPrintInt_Zero(val, maxLen);
+  printInt(val, maxLen);
   lcd.setCursor(x+maxLen-1, y);
 }
 
@@ -138,7 +118,7 @@ int editUnsigned(int *pVal, int min, int max, int x, int y) {
   if (exit==1) *pVal=val;
   else {
     lcd.setCursor(x, y);
-    LcdPrintInt_Zero(*pVal, maxLen);
+    printInt(*pVal, maxLen);
   }
 
   return key;

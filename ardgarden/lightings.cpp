@@ -69,7 +69,7 @@ void lightingsShowSummary() {
 }
 
 void lightingsShow() {
-  print(0, 0, "SUNSET="); lcd.print(sunset/60); lcd.print(":"); LcdPrintInt_Zero(sunset%60, 2);
+  print(0, 0, "SUNSET="); lcd.print(sunset/60); lcd.print(":"); printInt(sunset%60, 2);
   print(0, 1, "STATE="); lcd.print(state); lcd.print(", L="); lcd.print(light?"ON ":"OFF");
   lightingsShowSummary();
 }

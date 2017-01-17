@@ -139,8 +139,7 @@ void irrigazioneShow() {
 }
 
 void irrigazioneOutStateShow(int n) {
-  char s[20];
-  sprintf(s, "Outputs %02d:     ", n); print(0, 0, s);
+  print(0, 0, "Outputs "); printInt(n+1, 2); print(":     ");
   print(0, 1, "                ");
 }
 void irrigazioneOutState00Show(void) { irrigazioneOutStateShow(0); }
