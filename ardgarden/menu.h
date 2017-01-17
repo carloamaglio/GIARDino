@@ -1,5 +1,6 @@
 /*
- * menu.h - 
+ * menu.h - my simple menu functions for small text LCD (16x2)
+ *  Carlo Amaglio, Via Emigli 10 - 25081 Bedizzole (Italy)
  * 
  * Released into the public domain
  */

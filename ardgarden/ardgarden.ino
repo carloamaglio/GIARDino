@@ -1,6 +1,8 @@
 /*
  * ardgarden - ARDuino GARDEN automation
  *  Carlo Amaglio, Via Emigli 10 - 25081 Bedizzole (Italy)
+ * 
+ * Released into the public domain
  */
 
 #include <avr/wdt.h>

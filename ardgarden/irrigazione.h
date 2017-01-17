@@ -1,5 +1,6 @@
 /*
- * irrigazione.h - 
+ * irrigazione.h - Garden irrigation management module (irrigazione is "garden irrigation" in Italian)
+ *  Carlo Amaglio, Via Emigli 10 - 25081 Bedizzole (Italy)
  * 
  * Released into the public domain
  */

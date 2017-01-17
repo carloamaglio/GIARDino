@@ -1,5 +1,6 @@
 /*
  * keypad.cpp - library for controlling the keypad
+ *  Carlo Amaglio, Via Emigli 10 - 25081 Bedizzole (Italy)
  * 
  * Released into the public domain
  */
