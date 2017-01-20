@@ -38,12 +38,12 @@ typedef struct GTimer {
 
 
 void irrigazioneInit() {
-  rele[0].setAddr(13);
-  rele[1].setAddr(1);
-  rele[2].setAddr(2);
-  rele[3].setAddr(3);
-  rele[4].setAddr(11);
-  rele[5].setAddr(12);
+  rele[0].setAddr(12);
+  rele[1].setAddr(0);
+  rele[2].setAddr(1);
+  rele[3].setAddr(2);
+  rele[4].setAddr(3);
+  rele[5].setAddr(11);
 
   byte cg0[8] = {0x0,0x1b,0xe,0x4,0xe,0x1b,0x0,0x0}; 
   lcd.createChar(1, cg0);  // Carattere personalizzato (X -> Spento)
@@ -103,15 +103,18 @@ void irrigazioneLoop() {
   DateTime now = RTC.now();
   int nowmin = now.hour()*60+now.minute();
   GTimer t;
+  int states[NUMRELE];
+  for (int i=0; i<NUMRELE; i++) states[i]=0;
   for (int i=0; i<NUMOFTIMERS; i++) {
     readTimer(t, i);
-    if (false) rele[t.rele].setState(
+    states[t.rele] = 
       t.active && 
       day(now, t) && 
       nowmin>=t.tStart && 
       nowmin<t.tEnd
-    );
+    ;
   }
+  for (int i=0; i<NUMRELE; i++) rele[i].setState(states[i]);
   //rele[0].setState((millis() % 1000) > 700);	// demo
 }
 

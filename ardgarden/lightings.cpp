@@ -53,14 +53,14 @@ void lightingsLoop() {
   if (currentDay != now.day()) {
     updateCurrentDay();
   }
-  int mod = now.hour()*60+now.minute();
-  int night = (mod >= sunset-60);
+  int minutes = now.hour()*60+now.minute();
+  int night = (minutes >= sunset-10);
   switch (state) {
     case 0: // waiting for turning light ON. In this state light can be ON or OFF
-      if (night || (mod < 60)) { setLight(1); state++; }
+      if (night || (minutes < 60)) { setLight(1); state++; }
       break;
     case 1: // waiting for turning light OFF. In this state light can be ON or OFF
-      if (mod >= 60 && !night) { setLight(0); state--; }
+      if (minutes >= 60 && !night) { setLight(0); state--; }
       break;
   }
 }
