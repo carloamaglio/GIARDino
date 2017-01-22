@@ -1,4 +1,4 @@
-# ardgarden
+# GIARDino
 GIARDino: YAAGA Yet Another Arduino Garden Automation
 
 
