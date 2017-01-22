@@ -1,5 +1,5 @@
 /*
- * ardgarden - ARDuino GARDEN automation
+ * GIARDino - YAAGA Yet Another Arduino Garden Automation
  *  Carlo Amaglio, Via Emigli 10 - 25081 Bedizzole (Italy)
  * 
  * Released into the public domain
