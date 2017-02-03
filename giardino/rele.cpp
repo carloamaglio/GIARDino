@@ -1,5 +1,5 @@
 /*
- * rele.cpp - control a single rele. It can be local or remoted to an I2C expansion device
+ * rele.cpp - control a single rele. It can be local or (to be developed) remoted to an I2C expansion device
  *  Carlo Amaglio, Via Emigli 10 - 25081 Bedizzole (Italy)
  * 
  * Released into the public domain

@@ -30,7 +30,7 @@ static struct Task tasks[] {
   { lightingsInit, lightingsLoop }, 
 };
 
-static void dateTimeShow(void) { showDateTime(); irrigazioneShowSummary(); }
+static void dateTimeShow(void) { showDateTime(); irrigazioneShowSummary(); lightingsShowSummary(); }
 static void dateTimeSelect(void) { setDateAndTime(); }
 
 static const Item mainMenuItems[] {
@@ -56,7 +56,7 @@ void setup() {
   delay(200);
 
   keypad.setup(myloop);
-  print(0, 0, "*** BEDIZZOLE ***"); delay(500);
+  print(0, 0, "*** BEDIZZOLE **"); delay(500);
 
   Wire.begin();
   lcd.clear();

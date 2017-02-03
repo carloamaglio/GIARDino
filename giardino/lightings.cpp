@@ -66,6 +66,7 @@ void lightingsLoop() {
 }
 
 void lightingsShowSummary() {
+  lcd.setCursor(12, 0); lcd.print((char)(getLight()?2:1));
 }
 
 void lightingsShow() {

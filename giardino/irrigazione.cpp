@@ -38,12 +38,12 @@ typedef struct GTimer {
 
 
 void irrigazioneInit() {
-  rele[0].setAddr(12);
-  rele[1].setAddr(0);
-  rele[2].setAddr(1);
-  rele[3].setAddr(2);
-  rele[4].setAddr(3);
-  rele[5].setAddr(11);
+  rele[0].setAddr(0);
+  rele[1].setAddr(1);
+  rele[2].setAddr(2);
+  rele[3].setAddr(3);
+  rele[4].setAddr(11);
+  rele[5].setAddr(12);
 
   byte cg0[8] = {0x0,0x1b,0xe,0x4,0xe,0x1b,0x0,0x0}; 
   lcd.createChar(1, cg0);  // Carattere personalizzato (X -> Spento)
@@ -141,28 +141,28 @@ void irrigazioneShow() {
   irrigazioneShowSummary();
 }
 
-void irrigazioneOutStateShow(int n) {
+static void irrigazioneOutStateShow(int n) {
   print(0, 0, "Outputs "); printInt(n+1, 2); print(":     ");
   print(0, 1, "                ");
 }
-void irrigazioneOutState00Show(void) { irrigazioneOutStateShow(0); }
-void irrigazioneOutState01Show(void) { irrigazioneOutStateShow(1); }
-void irrigazioneOutState02Show(void) { irrigazioneOutStateShow(2); }
-void irrigazioneOutState03Show(void) { irrigazioneOutStateShow(3); }
-void irrigazioneOutState04Show(void) { irrigazioneOutStateShow(4); }
-void irrigazioneOutState05Show(void) { irrigazioneOutStateShow(5); }
+static void irrigazioneOutState00Show(void) { irrigazioneOutStateShow(0); }
+static void irrigazioneOutState01Show(void) { irrigazioneOutStateShow(1); }
+static void irrigazioneOutState02Show(void) { irrigazioneOutStateShow(2); }
+static void irrigazioneOutState03Show(void) { irrigazioneOutStateShow(3); }
+static void irrigazioneOutState04Show(void) { irrigazioneOutStateShow(4); }
+static void irrigazioneOutState05Show(void) { irrigazioneOutStateShow(5); }
 
-void irrigazioneOutStateSelect(int n) {
+static void irrigazioneOutStateSelect(int n) {
   unsupportedSelect();
 }
-void irrigazioneOutState00Select(void) { irrigazioneOutStateSelect(0); }
-void irrigazioneOutState01Select(void) { irrigazioneOutStateSelect(1); }
-void irrigazioneOutState02Select(void) { irrigazioneOutStateSelect(2); }
-void irrigazioneOutState03Select(void) { irrigazioneOutStateSelect(3); }
-void irrigazioneOutState04Select(void) { irrigazioneOutStateSelect(4); }
-void irrigazioneOutState05Select(void) { irrigazioneOutStateSelect(5); }
+static void irrigazioneOutState00Select(void) { irrigazioneOutStateSelect(0); }
+static void irrigazioneOutState01Select(void) { irrigazioneOutStateSelect(1); }
+static void irrigazioneOutState02Select(void) { irrigazioneOutStateSelect(2); }
+static void irrigazioneOutState03Select(void) { irrigazioneOutStateSelect(3); }
+static void irrigazioneOutState04Select(void) { irrigazioneOutStateSelect(4); }
+static void irrigazioneOutState05Select(void) { irrigazioneOutStateSelect(5); }
 
-void irrigazioneTimerDetailShow(int n) {
+static void irrigazioneTimerDetailShow(int n) {
   char s[20];
   GTimer t;
   readTimer(t, n);
@@ -182,16 +182,16 @@ void irrigazioneTimerDetailShow(int n) {
   sprintf(s, "%02d:%02d>%02d:%02d  U=%1d", t.tStart/60, t.tStart%60, t.tEnd/60, t.tEnd%60, t.rele);
   print(0, 1, s);
 }
-void irrigazioneTimerDetail00Show(void) { irrigazioneTimerDetailShow(0); }
-void irrigazioneTimerDetail01Show(void) { irrigazioneTimerDetailShow(1); }
-void irrigazioneTimerDetail02Show(void) { irrigazioneTimerDetailShow(2); }
-void irrigazioneTimerDetail03Show(void) { irrigazioneTimerDetailShow(3); }
-void irrigazioneTimerDetail04Show(void) { irrigazioneTimerDetailShow(4); }
-void irrigazioneTimerDetail05Show(void) { irrigazioneTimerDetailShow(5); }
-void irrigazioneTimerDetail06Show(void) { irrigazioneTimerDetailShow(6); }
-void irrigazioneTimerDetail07Show(void) { irrigazioneTimerDetailShow(7); }
-void irrigazioneTimerDetail08Show(void) { irrigazioneTimerDetailShow(8); }
-void irrigazioneTimerDetail09Show(void) { irrigazioneTimerDetailShow(9); }
+static void irrigazioneTimerDetail00Show(void) { irrigazioneTimerDetailShow(0); }
+static void irrigazioneTimerDetail01Show(void) { irrigazioneTimerDetailShow(1); }
+static void irrigazioneTimerDetail02Show(void) { irrigazioneTimerDetailShow(2); }
+static void irrigazioneTimerDetail03Show(void) { irrigazioneTimerDetailShow(3); }
+static void irrigazioneTimerDetail04Show(void) { irrigazioneTimerDetailShow(4); }
+static void irrigazioneTimerDetail05Show(void) { irrigazioneTimerDetailShow(5); }
+static void irrigazioneTimerDetail06Show(void) { irrigazioneTimerDetailShow(6); }
+static void irrigazioneTimerDetail07Show(void) { irrigazioneTimerDetailShow(7); }
+static void irrigazioneTimerDetail08Show(void) { irrigazioneTimerDetailShow(8); }
+static void irrigazioneTimerDetail09Show(void) { irrigazioneTimerDetailShow(9); }
 
 static char* ABILITAZIONE[] { "OFF", " ON", 0 };
 
@@ -227,7 +227,7 @@ static int editEndHour(GTimer &t, int x, int y) { _editHour(t.tEnd, x, y); }
 static int editStartMinute(GTimer &t, int x, int y) { _editMinute(t.tStart, x, y); }
 static int editEndMinute(GTimer &t, int x, int y) { _editMinute(t.tEnd, x, y); }
 
-void irrigazioneTimerDetailSelect(int n) {
+static void irrigazioneTimerDetailSelect(int n) {
   int i=0;
   GTimer t;
   readTimer(t, n);
@@ -256,16 +256,16 @@ void irrigazioneTimerDetailSelect(int n) {
     }
   }
 }
-void irrigazioneTimerDetail00Select(void) { irrigazioneTimerDetailSelect(0); }
-void irrigazioneTimerDetail01Select(void) { irrigazioneTimerDetailSelect(1); }
-void irrigazioneTimerDetail02Select(void) { irrigazioneTimerDetailSelect(2); }
-void irrigazioneTimerDetail03Select(void) { irrigazioneTimerDetailSelect(3); }
-void irrigazioneTimerDetail04Select(void) { irrigazioneTimerDetailSelect(4); }
-void irrigazioneTimerDetail05Select(void) { irrigazioneTimerDetailSelect(5); }
-void irrigazioneTimerDetail06Select(void) { irrigazioneTimerDetailSelect(6); }
-void irrigazioneTimerDetail07Select(void) { irrigazioneTimerDetailSelect(7); }
-void irrigazioneTimerDetail08Select(void) { irrigazioneTimerDetailSelect(8); }
-void irrigazioneTimerDetail09Select(void) { irrigazioneTimerDetailSelect(9); }
+static void irrigazioneTimerDetail00Select(void) { irrigazioneTimerDetailSelect(0); }
+static void irrigazioneTimerDetail01Select(void) { irrigazioneTimerDetailSelect(1); }
+static void irrigazioneTimerDetail02Select(void) { irrigazioneTimerDetailSelect(2); }
+static void irrigazioneTimerDetail03Select(void) { irrigazioneTimerDetailSelect(3); }
+static void irrigazioneTimerDetail04Select(void) { irrigazioneTimerDetailSelect(4); }
+static void irrigazioneTimerDetail05Select(void) { irrigazioneTimerDetailSelect(5); }
+static void irrigazioneTimerDetail06Select(void) { irrigazioneTimerDetailSelect(6); }
+static void irrigazioneTimerDetail07Select(void) { irrigazioneTimerDetailSelect(7); }
+static void irrigazioneTimerDetail08Select(void) { irrigazioneTimerDetailSelect(8); }
+static void irrigazioneTimerDetail09Select(void) { irrigazioneTimerDetailSelect(9); }
 
 static const Item items[] {
   ITEM_N(irrigazioneTimerDetail, 00), 
