@@ -8,6 +8,8 @@
 #include <arduino.h>
 #include "rele.h"
 
+#define ACTIVELOW 1
+
 Rele::Rele() {
 }
 
@@ -18,7 +20,7 @@ void Rele::setAddr(int addr, int state=0) {
 }
 
 void Rele::setState(int state) {
-  digitalWrite(addr, state);
+  digitalWrite(addr, ACTIVELOW?!state:state);
   this->state = state;
 }
 

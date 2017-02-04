@@ -13,6 +13,20 @@
 #include <RTClib.h>
 #include <LiquidCrystal.h>
 
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+
+#define ATMEGA  1
+#define UNO 0
+
+#else defined(__AVR_ATmega328P__)
+
+#define ATMEGA  0
+#define UNO 1
+
+#endif
+
+#define LENOF(a)  (sizeof(a)/sizeof(a[0]))
+
 typedef struct timer {
   unsigned long start;
   unsigned long interval;

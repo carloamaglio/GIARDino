@@ -33,4 +33,5 @@ void menuTask(struct Menu *menu) {
     } else if (key==btnRIGHT) {
     }
   }
+  lcd.clear();
 }

@@ -16,12 +16,14 @@
 
 #define EEPROMOFFSET  0
 
-#define NUMRELE 6
+#define RELAYS (ATMEGA?6:4)
 
-static Rele rele[NUMRELE];
+static Rele rele[RELAYS];
+static int addr[] { 2, 3, 11, 12, 13, 14 };
+
 
 typedef struct GTimer {
-  char rele;      // rele affected by the timer (0=all available rele)
+  char rele;      // rele affected by the timer
   unsigned int active:1;
   unsigned int sunday:1;
   unsigned int monday:1;
@@ -34,16 +36,11 @@ typedef struct GTimer {
   unsigned int tEnd;
 } GTimer;
 
-#define NUMOFTIMERS 10
+#define TIMERS 10
 
 
 void irrigazioneInit() {
-  rele[0].setAddr(0);
-  rele[1].setAddr(1);
-  rele[2].setAddr(2);
-  rele[3].setAddr(3);
-  rele[4].setAddr(11);
-  rele[5].setAddr(12);
+  for (int i=0; i<RELAYS; i++) rele[i].setAddr(addr[i]);
 
   byte cg0[8] = {0x0,0x1b,0xe,0x4,0xe,0x1b,0x0,0x0}; 
   lcd.createChar(1, cg0);  // Carattere personalizzato (X -> Spento)
@@ -103,18 +100,21 @@ void irrigazioneLoop() {
   DateTime now = RTC.now();
   int nowmin = now.hour()*60+now.minute();
   GTimer t;
-  int states[NUMRELE];
-  for (int i=0; i<NUMRELE; i++) states[i]=0;
-  for (int i=0; i<NUMOFTIMERS; i++) {
+  int states[RELAYS];
+  for (int i=0; i<RELAYS; i++) states[i]=0;
+  for (int i=0; i<TIMERS; i++) {
     readTimer(t, i);
-    states[t.rele] = 
-      t.active && 
-      day(now, t) && 
-      nowmin>=t.tStart && 
-      nowmin<t.tEnd
-    ;
+    t.rele--;
+    if (t.rele>=0 && t.rele<RELAYS) {
+      states[t.rele] |= 
+        t.active && 
+        day(now, t) && 
+        nowmin>=t.tStart && 
+        nowmin<t.tEnd
+      ;
+    }
   }
-  for (int i=0; i<NUMRELE; i++) rele[i].setState(states[i]);
+  for (int i=0; i<RELAYS; i++) rele[i].setState(states[i]);
   //rele[0].setState((millis() % 1000) > 700);	// demo
 }
 
@@ -122,17 +122,16 @@ static char releState(int nr) {
   return rele[nr].getState()?5:4;
 }
 
+static int x[] { 13, 14, 15, 13, 14, 15 };
+static int y[] { 0, 0, 0, 1, 1, 1 };
+
 static void printReleState(int nr) {
+  lcd.setCursor(x[nr], y[nr]);
   lcd.print(releState(nr));
 }
 
-static void printReleStates(int r, int n) {
-  while (n-->0) printReleState(r++);
-}
-
 void irrigazioneShowSummary() {
-  lcd.setCursor(13, 0); printReleStates(0, 3);
-  lcd.setCursor(13, 1); printReleStates(2, 3);
+  for (int i=0; i<RELAYS; i++) printReleState(i);
 }
 
 void irrigazioneShow() {
@@ -246,7 +245,7 @@ static void irrigazioneTimerDetailSelect(int n) {
       case 9: key=editStartMinute(t, 3, 1); break;
       case 10: key=editEndHour(t, 6, 1); break;
       case 11: key=editEndMinute(t, 9, 1); break;
-      case 12: key=editUnsignedChar(&t.rele, 0, NUMRELE, 15, 1); break;
+      case 12: key=editUnsignedChar(&t.rele, 1, RELAYS, 15, 1); break;
     }
     switch (key) {
       case btnSELECT: writeTimer(t, n);
@@ -282,8 +281,12 @@ static const Item items[] {
   ITEM_N(irrigazioneOutState, 01), 
   ITEM_N(irrigazioneOutState, 02), 
   ITEM_N(irrigazioneOutState, 03), 
+#if RELAYS>4
   ITEM_N(irrigazioneOutState, 04), 
+#if RELAYS>5
   ITEM_N(irrigazioneOutState, 05), 
+#endif
+#endif
 };
 
 static MENU(menu, items, 0);

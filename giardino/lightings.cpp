@@ -16,8 +16,10 @@
 #include "menu.h"
 #include "lightings.h"
 
+static Rele rele;
+
 static int light;
-static void setLight(int on) { light=on; }
+static void setLight(int on) { rele.setState(light=on); }
 static int getLight() { return light; }
 
 // DMS() - Convert Degrees Minutes Seconts to decimal degrees
@@ -40,6 +42,7 @@ static void updateCurrentDay() {
 }
 
 void lightingsInit() {
+  rele.setAddr(13);
   sunrise.Astronomical(); //Actual, Civil, Nautical, Astronomical
   updateCurrentDay();
   state = 0;
@@ -71,7 +74,7 @@ void lightingsShowSummary() {
 
 void lightingsShow() {
   print(0, 0, "SUNSET="); lcd.print(sunset/60); lcd.print(":"); printInt(sunset%60, 2);
-  print(0, 1, "STATE="); lcd.print(state); lcd.print(", L="); lcd.print(light?"ON ":"OFF");
+  print(0, 1, "STATE="); lcd.print(state); lcd.print(", L="); lcd.print(getLight()?"ON ":"OFF");
   lightingsShowSummary();
 }
 

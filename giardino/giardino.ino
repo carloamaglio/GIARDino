@@ -18,6 +18,8 @@
 #include "irrigazione.h"
 #include "lightings.h"
 
+//#define RELEDEMO
+
 RTC_DS1307 RTC;
 
 struct Task {
@@ -47,10 +49,19 @@ static void myloop(void) {
   wdt_reset();
 }
 
+#ifdef RELEDEMO
+static int addr[] { 0, 1, 2, 3, 11, 12 };
+static int n = LENOF(addr);
+#endif
+
 /**
  * 
  */
 void setup() {
+#ifdef RELEDEMO
+  for (int i=0; i<n; i++) pinMode(addr[i], OUTPUT);
+  return;
+#endif
   Serial.begin(9600);
   while (!Serial) ; // wait for Arduino Serial Monitor
   delay(200);
@@ -75,9 +86,23 @@ void setup() {
   lcd.clear();
 }
 
+#ifdef RELEDEMO
+static void setRele(int r) {
+    digitalWrite(addr[r], 0);
+    delay(50);
+    digitalWrite(addr[r], 1);
+    delay(5);
+}
+#endif
+
 /**
  * 
  */
 void loop() {
+#ifdef RELEDEMO
+  for (int i=0; i<n; i++) setRele(i);
+  for (int i=n-1; i>=0; i--) setRele(i);
+  return;
+#endif
   menuTask(mainMenu);
 }
