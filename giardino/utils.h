@@ -38,6 +38,7 @@ extern int timerExpired(timer* t);
 extern RTC_DS1307 RTC;
 
 extern LiquidCrystal lcd;
+extern int createChar(byte* cg);
 extern void print(int x, int y, char* s);
 extern void print(char* s);
 //extern void print(int n);

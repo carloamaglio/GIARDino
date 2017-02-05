@@ -16,10 +16,10 @@
 
 #define EEPROMOFFSET  0
 
-#define RELAYS (ATMEGA?6:4)
+#define RELAYS 6  //(ATMEGA?6:4)
 
 static Rele rele[RELAYS];
-static int addr[] { 2, 3, 11, 12, 13, 14 };
+static int addr[] { 2, 3, 11, 12, A2, A3 };
 
 
 typedef struct GTimer {
@@ -33,25 +33,34 @@ typedef struct GTimer {
   unsigned int friday:1;
   unsigned int saturday:1;
   unsigned int tStart;
-  unsigned int tEnd;
+  unsigned int tDuration;
 } GTimer;
 
 #define TIMERS 10
 
+static char xChar;
+static char vChar;
+static char clockChar;
+static char openChar;
+static char closedChar;
 
 void irrigazioneInit() {
   for (int i=0; i<RELAYS; i++) rele[i].setAddr(addr[i]);
 
-  byte cg0[8] = {0x0,0x1b,0xe,0x4,0xe,0x1b,0x0,0x0}; 
-  lcd.createChar(1, cg0);  // Carattere personalizzato (X -> Spento)
-  byte cg1[8] = {0x0,0x1,0x3,0x16,0x1c,0x8,0x0,0x0}; 
-  lcd.createChar(2, cg1);  // Carattere personalizzato (V -> Acceso)
-  byte cg2[8] = {0x0,0xe,0x15,0x17,0x11,0xe,0x0,0x0}; 
-  lcd.createChar(3, cg2);  // Carattere personalizzato (orologio -> Timer)
-  byte cg3[8] = {0x8,0x8,0x0,0x2,0x4,0x8,0x8,0x0}; 
-  lcd.createChar(4, cg3);  // Carattere personalizzato (contatto aperto)
-  byte cg4[8] = {0x8,0x8,0x8,0x8,0x8,0x8,0x8,0x0}; 
-  lcd.createChar(5, cg4);  // Carattere personalizzato (contatto chiuso)
+  byte cg0[8] = { 0x00, 0x1b, 0x0e, 0x04, 0x0e, 0x1b, 0x00, 0x00 }; 
+  xChar = createChar(cg0);  // Carattere personalizzato (X -> Spento)
+
+  byte cg1[8] = { 0x00, 0x01, 0x03, 0x16, 0x1c, 0x08, 0x00, 0x00 }; 
+  vChar = createChar(cg1);  // Carattere personalizzato (V -> Acceso)
+
+  byte cg2[8] = { 0x00, 0x0e, 0x15, 0x17, 0x11, 0x0e, 0x00, 0x00 }; 
+  clockChar = createChar(cg2);  // Carattere personalizzato (orologio -> Timer)
+
+  byte cg3[8] = { 0x08, 0x08, 0x01, 0x02, 0x04, 0x08, 0x08, 0x00 }; 
+  openChar = createChar(cg3);  // Carattere personalizzato (contatto aperto)
+
+  byte cg4[8] = { 0x08, 0x08, 0x04, 0x04, 0x04, 0x08, 0x08, 0x00 }; 
+  closedChar = createChar(cg4);  // Carattere personalizzato (contatto chiuso)
 
   lcd.clear();
   lcd.print("GTimer size="); lcd.print(sizeof(GTimer));
@@ -106,11 +115,12 @@ void irrigazioneLoop() {
     readTimer(t, i);
     t.rele--;
     if (t.rele>=0 && t.rele<RELAYS) {
+      int tEnd = t.tStart + t.tDuration;
       states[t.rele] |= 
         t.active && 
         day(now, t) && 
-        nowmin>=t.tStart && 
-        nowmin<t.tEnd
+        nowmin >= t.tStart && 
+        nowmin < tEnd
       ;
     }
   }
@@ -119,7 +129,7 @@ void irrigazioneLoop() {
 }
 
 static char releState(int nr) {
-  return rele[nr].getState()?5:4;
+  return rele[nr].getState() ? closedChar : openChar;
 }
 
 static int x[] { 13, 14, 15, 13, 14, 15 };
@@ -178,7 +188,7 @@ static void irrigazioneTimerDetailShow(int n) {
   lcd.print(t.saturday?"S":"-");
   lcd.print(t.sunday?"D":"-");
 
-  sprintf(s, "%02d:%02d>%02d:%02d  U=%1d", t.tStart/60, t.tStart%60, t.tEnd/60, t.tEnd%60, t.rele);
+  sprintf(s, "%02d:%02d > %02d   U=%1d", t.tStart/60, t.tStart%60, t.tDuration, t.rele);
   print(0, 1, s);
 }
 static void irrigazioneTimerDetail00Show(void) { irrigazioneTimerDetailShow(0); }
@@ -209,6 +219,16 @@ static char* FRIDAY[] { "-", "V", 0 };
 static char* SATURDAY[] { "-", "S", 0 };
 static char* SUNDAY[] { "-", "D", 0 };
 
+#define _editUnsignedField(val, tov, toval, min, max, x, y)   \
+  {                                                           \
+    int v = tov;                                              \
+    int rv = editUnsigned(&v, min, max, x, y);                \
+    if (rv==btnSELECT) val = toval;                           \
+    return rv;                                                \
+  }
+
+#define editUnsignedField(val, min, max, x, y)  _editUnsignedField(val, val, val, min, max, x, y)
+
 
 #define editTimeField(val, tov, toval, max, x, y)   \
   {                                                 \
@@ -220,17 +240,17 @@ static char* SUNDAY[] { "-", "D", 0 };
 
 #define _editHour(val, x, y)   editTimeField(val, val/60, v*60+(val%60), 23, x, y)
 static int editStartHour(GTimer &t, int x, int y) { _editHour(t.tStart, x, y); }
-static int editEndHour(GTimer &t, int x, int y) { _editHour(t.tEnd, x, y); }
 
 #define _editMinute(val, x, y) editTimeField(val, val%60, val-(val%60)+v, 59, x, y)
 static int editStartMinute(GTimer &t, int x, int y) { _editMinute(t.tStart, x, y); }
-static int editEndMinute(GTimer &t, int x, int y) { _editMinute(t.tEnd, x, y); }
+
+static int editDuration(GTimer &t, int x, int y) { editUnsignedField(t.tDuration, 0, 59, x, y); }
 
 static void irrigazioneTimerDetailSelect(int n) {
   int i=0;
   GTimer t;
   readTimer(t, n);
-  while (i>=0 && i<13) {
+  while (i>=0 && i<12) {
     int key;
     switch (i) {
       case 0: editListField(key, ABILITAZIONE, t.active, 4, 0); break;
@@ -243,9 +263,8 @@ static void irrigazioneTimerDetailSelect(int n) {
       case 7: editListField(key, SUNDAY, t.sunday, 15, 0); break;
       case 8: key=editStartHour(t, 0, 1); break;
       case 9: key=editStartMinute(t, 3, 1); break;
-      case 10: key=editEndHour(t, 6, 1); break;
-      case 11: key=editEndMinute(t, 9, 1); break;
-      case 12: key=editUnsignedChar(&t.rele, 1, RELAYS, 15, 1); break;
+      case 10: key=editUnsigned(&t.tDuration, 1, 59, 8, 1); break;
+      case 11: key=editUnsignedChar(&t.rele, 1, RELAYS, 15, 1); break;
     }
     switch (key) {
       case btnSELECT: writeTimer(t, n);

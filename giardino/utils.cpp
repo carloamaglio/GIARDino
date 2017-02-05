@@ -18,6 +18,12 @@ int timerExpired(timer* t) {
   return (millis() - t->start) >= t->interval;
 }
 
+static int userdefchar;
+
+int createChar(byte* cg) {
+  lcd.createChar(++userdefchar, cg);
+  return userdefchar;
+}
 
 void print(int x, int y, char* s) {
 	lcd.setCursor(x, y);

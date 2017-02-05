@@ -20,7 +20,7 @@ void Rele::setAddr(int addr, int state=0) {
 }
 
 void Rele::setState(int state) {
-  digitalWrite(addr, ACTIVELOW?!state:state);
+  digitalWrite(addr, state^ACTIVELOW?HIGH:LOW);
   this->state = state;
 }
 

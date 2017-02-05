@@ -10,6 +10,10 @@
 #include <TimeLib.h>
 #include <RTClib.h>
 #include <LiquidCrystal.h>
+#ifdef IRDEMO
+#include <IRremote.h>
+#include <IRremoteInt.h>
+#endif
 #include "keypad.h"
 #include "utils.h"
 #include "edit.h"
@@ -54,6 +58,12 @@ static int addr[] { 0, 1, 2, 3, 11, 12 };
 static int n = LENOF(addr);
 #endif
 
+#ifdef IRDEMO
+int RECV_PIN = 13;
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+#endif
+
 /**
  * 
  */
@@ -81,9 +91,13 @@ void setup() {
 
   for (int i=0; i<sizeof(tasks)/sizeof(tasks[0]); i++) tasks[i].init();
   menuInit(mainMenu);
-  wdt_enable(WDTO_2S);
+
+#ifdef IRDEMO
+  irrecv.enableIRIn(); // Start the receiver
+#endif
 
   lcd.clear();
+  wdt_enable(WDTO_2S);
 }
 
 #ifdef RELEDEMO
@@ -92,6 +106,67 @@ static void setRele(int r) {
     delay(50);
     digitalWrite(addr[r], 1);
     delay(5);
+}
+#endif
+
+#ifdef IRDEMO
+void dump(decode_results *results) {
+#if 0
+  // Dumps out the decode_results structure.
+  // Call this after IRrecv::decode()
+  int count = results->rawlen;
+  if (results->decode_type == UNKNOWN) {
+    Serial.print("Unknown encoding: ");
+  }
+  else if (results->decode_type == NEC) {
+    Serial.print("Decoded NEC: ");
+  }
+  else if (results->decode_type == SONY) {
+    Serial.print("Decoded SONY: ");
+  }
+  else if (results->decode_type == RC5) {
+    Serial.print("Decoded RC5: ");
+  }
+  else if (results->decode_type == RC6) {
+    Serial.print("Decoded RC6: ");
+  }
+  else if (results->decode_type == PANASONIC) {
+    Serial.print("Decoded PANASONIC - Address: ");
+    Serial.print(results->address, HEX);
+    Serial.print(" Value: ");
+  }
+  else if (results->decode_type == LG) {
+    Serial.print("Decoded LG: ");
+  }
+  else if (results->decode_type == JVC) {
+    Serial.print("Decoded JVC: ");
+  }
+  else if (results->decode_type == AIWA_RC_T501) {
+    Serial.print("Decoded AIWA RC T501: ");
+  }
+  else if (results->decode_type == WHYNTER) {
+    Serial.print("Decoded Whynter: ");
+  }
+  Serial.print(results->value, HEX);
+  Serial.print(" (");
+  Serial.print(results->bits, DEC);
+  Serial.println(" bits)");
+  Serial.print("Raw (");
+  Serial.print(count, DEC);
+  Serial.print("): ");
+
+  for (int i = 1; i < count; i++) {
+    if (i & 1) {
+      Serial.print(results->rawbuf[i]*USECPERTICK, DEC);
+    }
+    else {
+      Serial.write('-');
+      Serial.print((unsigned long) results->rawbuf[i]*USECPERTICK, DEC);
+    }
+    Serial.print(" ");
+  }
+  Serial.println();
+#endif
 }
 #endif
 
@@ -104,5 +179,15 @@ void loop() {
   for (int i=n-1; i>=0; i--) setRele(i);
   return;
 #endif
+
+#ifdef IRDEMO
+  if (irrecv.decode(&results)) {
+    Serial.println(results.value, HEX);
+    dump(&results);
+    irrecv.resume(); // Receive the next value
+  }
+  wdt_reset();
+#endif
+
   menuTask(mainMenu);
 }

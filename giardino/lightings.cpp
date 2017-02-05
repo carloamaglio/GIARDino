@@ -41,8 +41,18 @@ static void updateCurrentDay() {
   sunset = sunrise.Set(now.month(), currentDay); // (month,day) - january=1
 }
 
+static char offChar;
+static char onChar;
+
 void lightingsInit() {
-  rele.setAddr(13);
+
+  byte cg0[] { 0x00, 0x00, 0x0e, 0x0a, 0x0e, 0x00, 0x00, 0x00 }; 
+  offChar = createChar(cg0);  // light off
+
+  byte cg1[] { 0x04, 0x15, 0x0e, 0x1b, 0x0e, 0x15, 0x04, 0x00 }; 
+  onChar = createChar(cg1);  // light on
+
+  rele.setAddr(A1);
   sunrise.Astronomical(); //Actual, Civil, Nautical, Astronomical
   updateCurrentDay();
   state = 0;
@@ -69,7 +79,7 @@ void lightingsLoop() {
 }
 
 void lightingsShowSummary() {
-  lcd.setCursor(12, 0); lcd.print((char)(getLight()?2:1));
+  lcd.setCursor(12, 0); lcd.print((char)(getLight()?onChar:offChar));
 }
 
 void lightingsShow() {
