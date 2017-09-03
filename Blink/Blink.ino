@@ -40,12 +40,12 @@ static void flashAnalog(COROUTINE_CONTEXT(coroutine))
     times = flashAnalogTimes;
 
     for (i=0; i<times; i++) {
-      analogWrite(pin, 255);
-      coroutine.wait(100);
+      digitalWrite(LED_BUILTIN, HIGH);
+      coroutine.wait(1000);
       COROUTINE_YIELD;
   
-      analogWrite(pin, 0);
-      coroutine.wait(50);
+      digitalWrite(LED_BUILTIN, LOW);
+      coroutine.wait(500);
       COROUTINE_YIELD;
     }
 
@@ -56,8 +56,8 @@ static void flashAnalog(COROUTINE_CONTEXT(coroutine))
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
-  flashAnalogPin = 5;
-  flashAnalogTimes = 3;
+  flashAnalogPin = LED_BUILTIN;
+  flashAnalogTimes = 10;
   coroutines.start(flashAnalog);
 
   delay(50);
@@ -68,10 +68,10 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);                       // wait for a second
-  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);                       // wait for a second
+//  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+//  delay(1000);                       // wait for a second
+//  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+//  delay(1000);                       // wait for a second
   coroutines.update();
 }
 
