@@ -27,6 +27,10 @@ static Coroutines<5> coroutines;
 static int flashAnalogPin;
 static int flashAnalogTimes;
 
+static void foo()
+{
+}
+
 // flashes a LED attached to analog pin 5 for 100ms
 static void flashAnalog(COROUTINE_CONTEXT(coroutine))
 {
@@ -38,6 +42,8 @@ static void flashAnalog(COROUTINE_CONTEXT(coroutine))
 
     pin = flashAnalogPin;
     times = flashAnalogTimes;
+
+    foo();
 
     for (i=0; i<times; i++) {
       digitalWrite(LED_BUILTIN, HIGH);
